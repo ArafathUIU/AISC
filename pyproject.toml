@@ -1,0 +1,59 @@
+[project]
+name = "aisc"
+version = "0.1.0"
+description = "Autonomous AI Software Company — Recursive Quality-Gated Multi-Agent Engineering Platform"
+readme = "project.MD"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "AISC Team" }]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+select = [
+    "E", "W", "F", "I", "N", "D", "UP",
+    "B", "C4", "SIM", "ARG", "PTH", "RUF",
+]
+ignore = ["D100", "D104", "D107"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["services", "libs"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["services", "libs"]
+omit = ["*/tests/*"]
+branch = true
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "def __init__",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101", "B311"]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
