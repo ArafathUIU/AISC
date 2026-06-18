@@ -1,0 +1,19 @@
+[project]
+name = "aisc-utils"
+version = "0.1.0"
+description = "AISC shared utilities: logging, tracing, config"
+requires-python = ">=3.12"
+dependencies = [
+    "structlog>=24.1",
+    "opentelemetry-api>=1.24",
+    "opentelemetry-sdk>=1.24",
+    "pydantic-settings>=2.2",
+    "orjson>=3.9",
+]
+
+[tool.setuptools.packages.find]
+include = ["aisc_utils*"]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"

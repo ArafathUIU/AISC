@@ -1,0 +1,17 @@
+[project]
+name = "aisc-events"
+version = "0.1.0"
+description = "AISC Kafka event publisher and consumer"
+requires-python = ">=3.12"
+dependencies = [
+    "aiokafka>=0.11",
+    "protobuf>=5.26",
+    "aisc-models",
+]
+
+[tool.setuptools.packages.find]
+include = ["aisc_events*"]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"

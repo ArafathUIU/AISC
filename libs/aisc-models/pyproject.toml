@@ -1,0 +1,15 @@
+[project]
+name = "aisc-models"
+version = "0.1.0"
+description = "AISC shared Pydantic data models"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.7",
+]
+
+[tool.setuptools.packages.find]
+include = ["aisc_models*"]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"

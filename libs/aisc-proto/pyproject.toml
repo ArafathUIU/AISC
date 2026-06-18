@@ -1,0 +1,12 @@
+[project]
+name = "aisc-proto"
+version = "0.1.0"
+description = "AISC Protobuf event definitions"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+include = ["aisc*"]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
