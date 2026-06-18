@@ -8,7 +8,7 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, EmailStr, Field
 
-from ..services.user_store import user_store
+from auth_service.services.user_store import user_store
 
 router = APIRouter()
 

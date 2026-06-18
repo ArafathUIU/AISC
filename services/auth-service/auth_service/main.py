@@ -8,8 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from aisc_utils import configure_logging, get_logger, settings
 
-from .middleware.auth import JWTAuthMiddleware
-from .routes import auth, users
+from auth_service.middleware.auth import JWTAuthMiddleware
+from auth_service.routes import auth, users
 
 logger = get_logger(__name__)
 
