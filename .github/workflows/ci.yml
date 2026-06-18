@@ -18,10 +18,8 @@ jobs:
           cache: pip
       - name: Install shared libraries
         run: |
-          pip install -e libs/aisc-models
-          pip install -e libs/aisc-utils
-          pip install -e libs/aisc-events
-          pip install -e libs/aisc-proto
+          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto
+          pip install -e services/auth-service -e services/memory-service
       - name: Run ruff
         run: |
           pip install ruff
@@ -66,14 +64,11 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: |
-          pip install -e libs/aisc-models
-          pip install -e libs/aisc-utils
-          pip install -e libs/aisc-events
-          pip install -e libs/aisc-proto
+          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto
+          pip install -e services/auth-service -e services/memory-service
           pip install pytest pytest-asyncio pytest-cov
       - name: Run tests
-        run: pytest services/ libs/ -v --tb=short --ignore=services/*/tests
-        continue-on-error: true
+        run: pytest services/ libs/ -v --tb=short
 
   build-check:
     name: Build Check
@@ -85,7 +80,7 @@ jobs:
         run: docker compose config --quiet
       - name: Test Dockerfile builds
         run: |
-          for svc in auth-service orchestrator-service; do
+          for svc in auth-service memory-service; do
             if [ -f "services/$svc/Dockerfile" ]; then
               docker build -t "aisc/$svc:ci" -f "services/$svc/Dockerfile" .
             fi

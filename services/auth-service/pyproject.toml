@@ -3,6 +3,18 @@ name = "aisc-auth-service"
 version = "0.1.0"
 description = "AISC Authentication Service"
 requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.29",
+    "sqlalchemy[asyncio]>=2.0",
+    "bcrypt>=4.1",
+    "PyJWT>=2.8",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.2",
+    "email-validator>=2.1",
+    "aisc-models",
+    "aisc-utils",
+]
 
 [build-system]
 requires = ["setuptools>=75", "wheel"]

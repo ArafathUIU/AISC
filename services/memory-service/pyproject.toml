@@ -3,6 +3,19 @@ name = "aisc-memory-service"
 version = "0.1.0"
 description = "AISC Memory Service"
 requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.29",
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.29",
+    "redis>=5.0",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.2",
+    "qdrant-client>=1.9",
+    "neo4j>=5.22",
+    "aisc-models",
+    "aisc-utils",
+]
 
 [build-system]
 requires = ["setuptools>=75", "wheel"]
