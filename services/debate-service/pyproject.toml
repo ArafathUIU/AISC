@@ -1,0 +1,20 @@
+[project]
+name = "aisc-debate-service"
+version = "0.1.0"
+description = "AISC Debate Service - multi-agent consensus"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.29",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.2",
+    "aisc-models",
+    "aisc-utils",
+]
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["debate_service*"]
