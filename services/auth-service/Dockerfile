@@ -9,7 +9,7 @@ COPY libs/ /app/libs/
 RUN pip install -e /app/libs/aisc-models && pip install -e /app/libs/aisc-utils
 COPY services/auth-service/auth_service/ /app/auth_service/
 ENV PYTHONPATH=/app
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+CMD ["uvicorn", "auth_service.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
 
 FROM base AS production
 COPY services/auth-service/requirements.txt .
@@ -21,4 +21,4 @@ ENV PYTHONPATH=/app
 RUN useradd --create-home --shell /bin/bash appuser && chown -R appuser:appuser /app
 USER appuser
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 CMD curl -f http://localhost:8001/health || exit 1
-CMD ["gunicorn", "src.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8001"]
+CMD ["gunicorn", "auth_service.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8001"]

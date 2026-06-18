@@ -18,7 +18,7 @@ jobs:
           cache: pip
       - name: Install shared libraries
         run: |
-          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto \
+          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto -e libs/aisc-scoring \
             -e services/auth-service -e services/memory-service \
             -e services/agent-runtime -e services/orchestrator-service
       - name: Run ruff
@@ -65,7 +65,7 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: |
-          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto \
+          pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto -e libs/aisc-scoring \
             -e services/auth-service -e services/memory-service \
             -e services/agent-runtime -e services/orchestrator-service \
             pytest pytest-asyncio pytest-cov
