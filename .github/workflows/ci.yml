@@ -20,7 +20,7 @@ jobs:
         run: |
           pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto -e libs/aisc-scoring \
             -e services/auth-service -e services/memory-service \
-            -e services/agent-runtime -e services/orchestrator-service
+            -e services/agent-runtime -e services/orchestrator-service -e services/rag-service
       - name: Run ruff
         run: |
           pip install ruff
@@ -67,7 +67,7 @@ jobs:
         run: |
           pip install -e libs/aisc-models -e libs/aisc-utils -e libs/aisc-events -e libs/aisc-proto -e libs/aisc-scoring \
             -e services/auth-service -e services/memory-service \
-            -e services/agent-runtime -e services/orchestrator-service \
+            -e services/agent-runtime -e services/orchestrator-service -e services/rag-service \
             pytest pytest-asyncio pytest-cov
       - name: Run tests
         run: pytest services/ libs/ -v --tb=short
