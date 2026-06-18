@@ -4,6 +4,3 @@ gunicorn>=22.0
 redis>=5.0
 pydantic>=2.7
 pydantic-settings>=2.2
-aisc-models
-aisc-utils
-aisc-events
