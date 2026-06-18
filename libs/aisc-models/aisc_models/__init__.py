@@ -1,6 +1,6 @@
 """AISC shared Pydantic data models."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 from uuid import UUID, uuid4
 
@@ -93,7 +93,7 @@ class ProjectStatus(StrEnum):
 class EventEnvelope(BaseModel):
     event_id: UUID = Field(default_factory=uuid4)
     event_type: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     source_service: str
     source_agent: str | None = None
     correlation_id: UUID = Field(default_factory=uuid4)
