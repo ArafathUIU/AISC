@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Callable
+from collections.abc import Callable
 
 import orjson
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-
 from aisc_models import EventEnvelope
 
 
@@ -69,10 +68,10 @@ class EventConsumer:
         self._group_id = group_id
         self._client_id = client_id
         self._consumer: AIOKafkaConsumer | None = None
-        self._handlers: dict[str, list[Callable]] = {}
+        self._handlers: dict[str, list[Callable[..., object]]] = {}
 
-    def on(self, event_type: str) -> Callable:
-        def decorator(handler: Callable) -> Callable:
+    def on(self, event_type: str) -> Callable[..., object]:
+        def decorator(handler: Callable[..., object]) -> Callable[..., object]:
             self._handlers.setdefault(event_type, []).append(handler)
             return handler
         return decorator

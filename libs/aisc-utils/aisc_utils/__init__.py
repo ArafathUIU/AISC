@@ -8,7 +8,7 @@ import structlog
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def configure_logging(service_name: str = "aisc", log_level: str = "INFO") -> None:
+def configure_logging(service_name: str = "aisc", log_level: str = "INFO") -> None:  # noqa: ARG001
     structlog.configure(
         processors=[
             structlog.stdlib.filter_by_level,
