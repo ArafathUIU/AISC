@@ -4,7 +4,6 @@ import uuid
 
 import pytest
 from fastapi.testclient import TestClient
-
 from memory_service.main import app
 
 client = TestClient(app)

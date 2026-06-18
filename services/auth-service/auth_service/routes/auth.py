@@ -81,13 +81,15 @@ def decode_token(token: str) -> dict[str, object]:
         decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return decoded
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
+        raise HTTPException(status_code=401, detail="Token expired") from None
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token") from None
 
 
 async def get_current_user(request: Request) -> dict[str, object]:
-    auth_header = getattr(request.state, "user_id", None) if hasattr(request.state, "user_id") else None
+    auth_header: str | None = (
+        str(request.state.user_id) if hasattr(request.state, "user_id") else None
+    )
     if not auth_header:
         auth_header = request.headers.get("Authorization", "").removeprefix("Bearer ")
         if auth_header:
@@ -140,7 +142,7 @@ async def refresh_token(body: RefreshRequest) -> TokenResponse:
 
 
 @router.get("/me", response_model=UserResponse)
-async def me(current_user: dict[str, object] = Depends(get_current_user)) -> UserResponse:
+async def me(current_user: dict[str, object] = Depends(get_current_user)) -> UserResponse:  # noqa: B008
     user = user_store.get_by_email(str(current_user.get("sub", "")))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

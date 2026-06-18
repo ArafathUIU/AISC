@@ -1,9 +1,7 @@
-import asyncio
 import uuid
 from datetime import UTC, datetime
 
-import pytest
-from aisc_models import EventEnvelope, AgentType, ArtifactType, GateType
+from aisc_models import AgentType, ArtifactType, EventEnvelope, GateType
 
 
 class TestEventEnvelope:
@@ -62,9 +60,9 @@ class TestEventEnvelope:
 class TestAgentTypeEnum:
     def test_all_agent_types(self) -> None:
         assert len(AgentType) == 15
-        assert AgentType.ORCHESTRATOR == "orchestrator"
-        assert AgentType.DEVELOPER == "developer"
-        assert AgentType.SELF_HEALING == "self_healing"
+        assert AgentType.ORCHESTRATOR.value == "orchestrator"
+        assert AgentType.DEVELOPER.value == "developer"
+        assert AgentType.SELF_HEALING.value == "self_healing"
 
     def test_agent_type_values(self) -> None:
         expected = {
@@ -82,21 +80,21 @@ class TestArtifactTypeEnum:
         assert len(ArtifactType) == 12
 
     def test_key_artifact_types(self) -> None:
-        assert ArtifactType.PRD == "prd"
-        assert ArtifactType.SOURCE_CODE == "source_code"
-        assert ArtifactType.TEST_FILE == "test_file"
-        assert ArtifactType.SECURITY_REPORT == "security_report"
+        assert ArtifactType.PRD.value == "prd"
+        assert ArtifactType.SOURCE_CODE.value == "source_code"
+        assert ArtifactType.TEST_FILE.value == "test_file"
+        assert ArtifactType.SECURITY_REPORT.value == "security_report"
 
 
 class TestGateTypeEnum:
     def test_all_gate_types(self) -> None:
         assert len(GateType) == 6
-        assert GateType.REQUIREMENTS == "requirements"
-        assert GateType.ARCHITECTURE == "architecture"
-        assert GateType.CODE == "code"
-        assert GateType.TESTING == "testing"
-        assert GateType.SECURITY == "security"
-        assert GateType.DEPLOYMENT == "deployment"
+        assert GateType.REQUIREMENTS.value == "requirements"
+        assert GateType.ARCHITECTURE.value == "architecture"
+        assert GateType.CODE.value == "code"
+        assert GateType.TESTING.value == "testing"
+        assert GateType.SECURITY.value == "security"
+        assert GateType.DEPLOYMENT.value == "deployment"
 
 
 class TestModelConstraints:
@@ -113,14 +111,20 @@ class TestModelConstraints:
         assert valid.passed is True
 
     def test_evaluation_result(self) -> None:
-        from aisc_models import MetricScore, EvaluationResult
+        from aisc_models import EvaluationResult, MetricScore
         result = EvaluationResult(
             artifact_id=uuid.uuid4(),
             gate_type=GateType.CODE,
             aggregate_score=93.5,
             metric_scores=[
-                MetricScore(metric_name="complexity", score=95, weight=0.2, justification="Clean", passed=True),
-                MetricScore(metric_name="security", score=92, weight=0.2, justification="No issues", passed=True),
+                MetricScore(
+                    metric_name="complexity",
+                    score=95, weight=0.2, justification="Clean", passed=True,
+                ),
+                MetricScore(
+                    metric_name="security",
+                    score=92, weight=0.2, justification="No issues", passed=True,
+                ),
             ],
             passed=True,
             iteration=3,

@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, PointStruct, VectorParams
+from typing import Any
 
 from aisc_utils import get_logger, settings
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, PointStruct, VectorParams
 
 logger = get_logger(__name__)
 
@@ -29,18 +30,22 @@ class QdrantStore:
         logger.info("qdrant_connected", host=settings.qdrant_host)
 
     async def ensure_collections(self) -> None:
+        if self._client is None:
+            return
         for name, dims in COLLECTIONS.items():
-            if not self._client.collection_exists(name):  # type: ignore[union-attr]
-                self._client.create_collection(  # type: ignore[union-attr]
+            if not self._client.collection_exists(name):
+                self._client.create_collection(
                     collection_name=name,
                     vectors_config=VectorParams(size=dims, distance=Distance.COSINE),
                 )
                 logger.info("qdrant_collection_created", name=name)
 
     async def upsert(
-        self, collection: str, point_id: str, vector: list[float], payload: dict
+        self, collection: str, point_id: str, vector: list[float], payload: dict[str, Any]
     ) -> None:
-        self._client.upsert(  # type: ignore[union-attr]
+        if self._client is None:
+            return
+        self._client.upsert(
             collection_name=collection,
             points=[PointStruct(id=point_id, vector=vector, payload=payload)],
         )
@@ -51,8 +56,10 @@ class QdrantStore:
         vector: list[float],
         limit: int = 10,
         score_threshold: float = 0.0,
-    ) -> list[dict]:
-        results = self._client.search(  # type: ignore[union-attr]
+    ) -> list[dict[str, Any]]:
+        if self._client is None:
+            return []
+        results = self._client.search(  # type: ignore[attr-defined]
             collection_name=collection,
             query_vector=vector,
             limit=limit,
@@ -63,8 +70,10 @@ class QdrantStore:
             for r in results
         ]
 
-    async def delete_points(self, collection: str, point_ids: list[str]) -> None:
-        self._client.delete(  # type: ignore[union-attr]
+    async def delete_points(self, collection: str, point_ids: list[Any]) -> None:
+        if self._client is None:
+            return
+        self._client.delete(
             collection_name=collection,
             points_selector=point_ids,
         )

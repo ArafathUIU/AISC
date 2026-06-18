@@ -1,9 +1,7 @@
 """Auth service unit tests."""
 
-import pytest
-from fastapi.testclient import TestClient
-
 from auth_service.main import app
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 

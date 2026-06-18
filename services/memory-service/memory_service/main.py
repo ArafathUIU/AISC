@@ -1,22 +1,21 @@
 """AISC Memory Service — Unified 4-tier memory access."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
+from aisc_utils import configure_logging, get_logger, settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from aisc_utils import configure_logging, get_logger, settings
-
 from memory_service.routes.memory import router as memory_router
-from memory_service.stores.redis_store import redis_store
 from memory_service.stores.pg_store import pg_store
+from memory_service.stores.redis_store import redis_store
 
 logger = get_logger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     configure_logging("memory-service", settings.log_level)
     logger.info("memory_service_starting", port=8007)
 

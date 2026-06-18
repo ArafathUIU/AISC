@@ -41,7 +41,7 @@ class RedisStore:
         value = await self._redis.get(key)
         if value is None:
             return None
-        return json.loads(value)
+        return json.loads(value)  # type: ignore[no-any-return]
 
     async def set(self, key: str, value: dict[str, Any], ttl: int | None = None) -> None:
         if not self._redis:
@@ -60,10 +60,10 @@ class RedisStore:
         if not self._redis:
             return []
         keys: list[str] = []
-        cursor = 0
+        cursor: int = 0
         while True:
             cursor, batch = await self._redis.scan(cursor, match=pattern, count=count)
-            keys.extend(batch)
+            keys.extend(str(k) for k in batch)
             if cursor == 0:
                 break
         return keys

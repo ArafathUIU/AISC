@@ -1,7 +1,10 @@
 """AISC shared Pydantic data models."""
 
+from __future__ import annotations
+
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -99,7 +102,7 @@ class EventEnvelope(BaseModel):
     correlation_id: UUID = Field(default_factory=uuid4)
     project_id: UUID | None = None
     task_id: UUID | None = None
-    payload: dict = Field(default_factory=dict)
+    payload: dict[str, Any] = Field(default_factory=dict)
     version: str = "1.0"
 
 
@@ -117,7 +120,7 @@ class TaskContext(BaseModel):
     project_id: UUID
     agent_type: AgentType
     priority: Priority = Priority.MEDIUM
-    input: dict = Field(default_factory=dict)
+    input: dict[str, Any] = Field(default_factory=dict)
     dependencies: list[UUID] = Field(default_factory=list)
 
 
@@ -131,7 +134,7 @@ class Artifact(BaseModel):
     version: int = 1
     status: ArtifactStatus = ArtifactStatus.DRAFT
     parent_artifact_id: UUID | None = None
-    metadata: dict = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class MetricScore(BaseModel):

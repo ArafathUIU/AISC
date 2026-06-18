@@ -1,5 +1,7 @@
 """Memory service — store and search routes."""
 
+from typing import Any
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -13,7 +15,7 @@ router = APIRouter()
 class StoreRequest(BaseModel):
     tier: str
     key: str
-    data: dict
+    data: dict[str, Any]
 
 
 @router.post("/store")
@@ -31,9 +33,9 @@ async def search_memory(
     q: str | None = None,
     tier: str | None = None,
     limit: int = 20,
-    project_id: str | None = None,
+    project_id: str | None = None,  # noqa: ARG001
 ) -> dict[str, object]:
-    results: list = []
+    results: list[dict[str, object]] = []
     if tier == "short" and q and redis_store.is_connected:
         keys = await redis_store.scan_keys(f"*{q}*")
         results = [{"key": k, "tier": "short"} for k in keys[:limit]]
@@ -41,7 +43,7 @@ async def search_memory(
 
 
 @router.get("/context/{agent_id}")
-async def get_agent_context(agent_id: str, task_type: str | None = None) -> dict:
+async def get_agent_context(agent_id: str, task_type: str | None = None) -> dict[str, object]:
     agent_state = None
     if redis_store.is_connected:
         agent_state = await redis_store.get(f"aisc:agent:{agent_id}:state")
@@ -67,9 +69,14 @@ async def get_project_history(project_id: str) -> dict[str, object]:
             artifacts = art_result.scalars().all()
 
             return {
-                "project": {"id": str(project.id), "name": project.name, "status": project.status},
+                "project": {
+                    "id": str(project.id), "name": project.name, "status": project.status
+                },
                 "artifacts": [
-                    {"id": str(a.id), "type": a.type, "name": a.name, "version": a.version}
+                    {
+                        "id": str(a.id), "type": a.type,
+                        "name": a.name, "version": a.version,
+                    }
                     for a in artifacts
                 ],
             }

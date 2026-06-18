@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
+from typing import Any
 
 import orjson
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -35,7 +36,7 @@ class EventPublisher:
         if self._producer is None:
             raise RuntimeError("Publisher not started")
         topic_name = topic or f"aisc.{event.event_type.lower()}"
-        payload = event.model_dump(mode="json")
+        payload: dict[str, Any] = event.model_dump(mode="json")
         await self._producer.send_and_wait(topic_name, payload)
 
     async def publish_batch(self, events: list[tuple[EventEnvelope, str]]) -> None:
@@ -43,7 +44,7 @@ class EventPublisher:
             raise RuntimeError("Publisher not started")
         batch = self._producer.create_batch()
         for event, topic in events:
-            payload = event.model_dump(mode="json")
+            payload: dict[str, Any] = event.model_dump(mode="json")
             metadata = batch.append(
                 key=bytes(str(event.correlation_id), "utf-8"),
                 value=orjson.dumps(payload),
@@ -99,11 +100,11 @@ class EventConsumer:
         try:
             async for msg in self._consumer:
                 try:
-                    event_data = msg.value
+                    event_data: dict[str, Any] = msg.value
                     event_type = event_data.get("event_type", "")
                     handlers = self._handlers.get(event_type, [])
                     for handler in handlers:
-                        await handler(event_data)
+                        await handler(event_data)  # type: ignore[misc]
                     await self._consumer.commit()
                 except Exception:
                     import structlog

@@ -1,12 +1,11 @@
 """AISC Auth Service — FastAPI application."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from aisc_utils import configure_logging, get_logger, settings
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from auth_service.middleware.auth import JWTAuthMiddleware
 from auth_service.routes import auth, users
@@ -15,7 +14,7 @@ logger = get_logger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     configure_logging("auth-service", settings.log_level)
     logger.info("auth_service_starting", port=8001)
     yield

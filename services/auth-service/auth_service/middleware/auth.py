@@ -1,10 +1,11 @@
 """Auth service — JWT middleware for route protection."""
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from typing import Any
 
 import jwt
+from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 JWT_SECRET = "dev-secret-change-in-production"
 JWT_ALGORITHM = "HS256"
@@ -22,7 +23,7 @@ PUBLIC_PATHS: set[str] = {
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next: Any) -> Any:
         path = request.url.path.rstrip("/")
         if path in PUBLIC_PATHS or path.startswith("/docs") or path.startswith("/openapi"):
             return await call_next(request)
@@ -33,7 +34,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
 
         token = auth_header.removeprefix("Bearer ")
         try:
-            decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            decoded: dict[str, Any] = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
             request.state.user_id = decoded["sub"]
             request.state.user_role = decoded.get("role", "viewer")
         except jwt.ExpiredSignatureError:
@@ -44,11 +45,9 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 
-def require_permission(permission: str):
-    """FastAPI dependency to check user permissions."""
-
+def require_permission(permission: str):  # type: ignore[no-untyped-def]
     async def dependency(request: Request) -> str:
-        user_role = getattr(request.state, "user_role", "viewer")
+        user_role: str = getattr(request.state, "user_role", "viewer")
 
         role_permissions: dict[str, set[str]] = {
             "admin": {
@@ -68,7 +67,6 @@ def require_permission(permission: str):
 
         allowed = role_permissions.get(user_role, set())
         if permission not in allowed:
-            from fastapi import HTTPException
             raise HTTPException(status_code=403, detail=f"Missing permission: {permission}")
         return user_role
 

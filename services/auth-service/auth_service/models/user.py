@@ -1,6 +1,7 @@
 """Auth service SQLAlchemy models."""
 
-from datetime import UTC, datetime
+from datetime import datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import Boolean, DateTime, String, func
@@ -20,7 +21,7 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="developer")
-    settings: Mapped[dict | None] = mapped_column(default=dict)
+    settings: Mapped[dict[str, Any] | None] = mapped_column(default=dict)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

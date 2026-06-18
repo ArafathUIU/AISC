@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from neo4j import AsyncGraphDatabase, AsyncManagedTransaction
+from typing import Any
 
 from aisc_utils import get_logger, settings
+from neo4j import AsyncGraphDatabase
 
 logger = get_logger(__name__)
 
@@ -26,29 +27,24 @@ class Neo4jStore:
         await self._driver.close()
 
     async def run_query(
-        self, cypher: str, params: dict | None = None
-    ) -> list[dict]:
+        self, cypher: str, params: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         async with self._driver.session() as session:
             result = await session.run(cypher, params or {})
-            records = await result.data()
-            return records
+            return await result.data()
 
     async def run_write_query(
-        self, cypher: str, params: dict | None = None
-    ) -> list[dict]:
+        self, cypher: str, params: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         async with self._driver.session() as session:
             result = await session.execute_write(
                 lambda tx: tx.run(cypher, params or {})
             )
-            records = await result.data()
-            return records
+            data: list[dict[str, Any]] = await result.data()
+            return data
 
-    async def merge_node(
-        self, label: str, properties: dict
-    ) -> None:
-        prop_string = ", ".join(
-            f"{k}: ${k}" for k in properties
-        )
+    async def merge_node(self, label: str, properties: dict[str, Any]) -> None:
+        prop_string = ", ".join(f"{k}: ${k}" for k in properties)
         await self.run_write_query(
             f"MERGE (n:{label} {{{prop_string}}}) SET n += $props",
             {**properties, "props": properties},
@@ -57,10 +53,10 @@ class Neo4jStore:
     async def create_relationship(
         self,
         from_label: str,
-        from_props: dict,
+        from_props: dict[str, Any],
         rel_type: str,
         to_label: str,
-        to_props: dict,
+        to_props: dict[str, Any],
     ) -> None:
         await self.run_write_query(
             f"""
@@ -74,7 +70,7 @@ class Neo4jStore:
 
     async def get_entity_relations(
         self, label: str, entity_id: str
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         return await self.run_query(
             f"""
             MATCH (n:{label} {{id: $id}})-[r]-(m)

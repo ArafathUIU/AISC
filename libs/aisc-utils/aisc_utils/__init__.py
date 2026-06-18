@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 import structlog
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -30,7 +31,7 @@ def configure_logging(service_name: str = "aisc", log_level: str = "INFO") -> No
     )
 
 
-def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
+def get_logger(name: str | None = None) -> Any:
     return structlog.get_logger(name or __name__)
 
 
