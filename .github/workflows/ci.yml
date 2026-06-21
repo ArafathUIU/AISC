@@ -82,8 +82,8 @@ jobs:
         run: docker compose config --quiet
       - name: Test Dockerfile builds
         run: |
-          for svc in auth-service memory-service; do
+          for svc in auth-service orchestrator-service agent-runtime memory-service rag-service debate-service; do
             if [ -f "services/$svc/Dockerfile" ]; then
-              docker build -t "aisc/$svc:ci" -f "services/$svc/Dockerfile" .
+              docker build --target development -t "aisc/$svc:ci" -f "services/$svc/Dockerfile" .
             fi
           done

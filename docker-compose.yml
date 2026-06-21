@@ -175,6 +175,127 @@ services:
     ports:
       - "8200:8200"
 
+  # ============== AISC Services ==============
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+      target: development
+    container_name: aisc-auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: console
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/auth-service/auth_service:/app/auth_service
+      - ./libs:/app/libs
+
+  orchestrator-service:
+    build:
+      context: .
+      dockerfile: services/orchestrator-service/Dockerfile
+      target: development
+    container_name: aisc-orchestrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: console
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./services/orchestrator-service/orchestrator_service:/app/orchestrator_service
+      - ./libs:/app/libs
+
+  agent-runtime:
+    build:
+      context: .
+      dockerfile: services/agent-runtime/Dockerfile
+      target: development
+    container_name: aisc-agent-runtime
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: console
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./services/agent-runtime/agent_runtime:/app/agent_runtime
+      - ./libs:/app/libs
+
+  memory-service:
+    build:
+      context: .
+      dockerfile: services/memory-service/Dockerfile
+      target: development
+    container_name: aisc-memory
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+      QDRANT_HOST: qdrant
+      NEO4J_URI: bolt://neo4j:7687
+      LOG_LEVEL: DEBUG
+      LOG_FORMAT: console
+    ports:
+      - "8007:8007"
+    volumes:
+      - ./services/memory-service/memory_service:/app/memory_service
+      - ./libs:/app/libs
+
+  rag-service:
+    build:
+      context: .
+      dockerfile: services/rag-service/Dockerfile
+      target: development
+    container_name: aisc-rag
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    ports:
+      - "8006:8006"
+    volumes:
+      - ./services/rag-service/rag_service:/app/rag_service
+      - ./libs:/app/libs
+
+  debate-service:
+    build:
+      context: .
+      dockerfile: services/debate-service/Dockerfile
+      target: development
+    container_name: aisc-debate
+    ports:
+      - "8010:8010"
+    volumes:
+      - ./services/debate-service/debate_service:/app/debate_service
+      - ./libs:/app/libs
+
 volumes:
   postgres_data:
   redis_data:
